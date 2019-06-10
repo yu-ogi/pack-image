@@ -1,6 +1,6 @@
 {
   "name": "pack-image",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A very simple packing images tool",
   "repository": {
     "type": "git",
