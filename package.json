@@ -2,6 +2,13 @@
   "name": "pack-image",
   "version": "0.0.1",
   "description": "A very simple packing images tool",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yu-ogi/pack-image.git"
+  },
+  "bugs": {
+    "url" : "https://github.com/yu-ogi/pack-image/issues"
+  },
   "main": "lib/index.js",
   "files": [
     "lib"
@@ -14,7 +21,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "yu-ogi",
-  "license": "",
+  "license": "MIT",
   "dependencies": {
     "commander": "2.20.0",
     "glob-promise": "3.4.0",
