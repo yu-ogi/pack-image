@@ -11,9 +11,10 @@ program
     .arguments("<image_files>")
     .option("-H, --height <number>", "limit height of packed image", 2048)
     .option("-W, --width <number>", "limit width of packed image", 2048)
-    .option("-o, --output <file_name>", "output file name of packed image", "sprites.png")
+    .option("-o, --output <file_name>", "output file name of packed image", "packed.png")
     .option("--padding <number>", "padding of each images", 2)
-    .option("--json <json_name>", "output file name of packed sprite data", "sprites.json")
+    .option("--json <json_name>", "output file name of packed position data", "packed.json")
+    .option("--allow-multiple", "allow to output multiple packed images and sprite data", false)
     .option("--verbose", "output log for details")
     .parse(process.argv);
 
@@ -31,6 +32,7 @@ async function doAction() {
         const output = program.output as string;
         const padding = parseInt(program.padding, 10);
         const json = program.json as string;
+        const allowMultiple = !!program.allowMultiple;
         const verbose = !!program.verbose;
         const args = program.args;
         const images = await getImageFiles(args);
@@ -58,7 +60,8 @@ async function doAction() {
                 dirName: path.dirname(path.resolve(process.cwd(), fileName)),
                 baseName: path.basename(fileName, path.extname(fileName)),
                 fileName
-            }))
+            })),
+            allowMultiple
         });
         process.exit(0);
     } catch (e) {

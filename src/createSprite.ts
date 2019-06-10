@@ -14,9 +14,10 @@ export interface CreateSpriteParameter {
     width: number;
     height: number;
     padding: number;
+    allowMultiple: boolean;
 }
 
-export async function createSprite({inputFiles, width, height, padding, outputImage, outputJson}: CreateSpriteParameter): Promise<void> {
+export async function createSprite({inputFiles, width, height, padding, outputImage, outputJson, allowMultiple}: CreateSpriteParameter): Promise<void> {
     const opts: IOption = {
         smart: true,
         pot: false,
@@ -29,11 +30,15 @@ export async function createSprite({inputFiles, width, height, padding, outputIm
     packer.addArray(imageDatas);
     const bins = packer.save();
 
+    if (!allowMultiple && 1 < bins.length) {
+        throw new Error("Packed images will be output two or more. You should specify --allow-multiple to output them");
+    }
+
     for (let i = 0; i < packer.bins.length; i++) {
         const bin = packer.bins[i];
         const spriteImage = images(bins[0].width, bins[0].height);
-        const outputImageName = `${outputImage.baseName}${i}.png`;
-        const outputJsonName = `${outputJson.baseName}${i}.json`;
+        const outputImageName = `${outputImage.baseName}${1 < packer.bins.length ? i : ""}.png`;
+        const outputJsonName = `${outputJson.baseName}${1 < packer.bins.length ? i : ""}.json`;
         const json: {[name: string]: any} = {};
 
         logger.info(`try to pack images:`);
@@ -54,6 +59,6 @@ export async function createSprite({inputFiles, width, height, padding, outputIm
         spriteImage.save(path.resolve(outputImage.dirName, outputImageName), "png");
         logger.log(`output packed image: ${outputImageName}`);
         await promises.writeFile(path.resolve(outputJson.dirName, outputJsonName), JSON.stringify(json));
-        logger.log(`output packed sprite data: ${outputJsonName}`);
+        logger.log(`output packed position data: ${outputJsonName}`);
     }
 }
