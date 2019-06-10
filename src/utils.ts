@@ -1,0 +1,10 @@
+import glob from "glob-promise";
+
+export async function getImageFiles(paths: string[]) {
+    const ret: string[] = [];
+    for (let i = 0; i < paths.length; i++) {
+        const files = await glob(paths[i]);
+        ret.push(...files);
+    }
+    return ret;
+}
