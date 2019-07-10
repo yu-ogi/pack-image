@@ -27,7 +27,7 @@
     "commander": "2.20.0",
     "glob-promise": "3.4.0",
     "images": "3.0.2",
-    "maxrects-packer": "2.3.0"
+    "maxrects-packer": "2.4.4"
   },
   "devDependencies": {
     "@types/images": "^2.2.2",
