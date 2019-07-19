@@ -2,6 +2,7 @@
   "name": "pack-image",
   "version": "0.1.0",
   "description": "A very simple packing images tool",
+  "keywords": ["spritesheet", "images", "pack", "bundle", "texture"],
   "repository": {
     "type": "git",
     "url": "https://github.com/yu-ogi/pack-image.git"
