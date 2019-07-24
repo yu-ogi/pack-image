@@ -16,10 +16,12 @@ pack-image "**/image*.png" --output packed.png --json packed.json --verbose
 
 ### example
 
-* ![fish.png](https://github.com/yu-ogi/pack-image/blob/master/images/fish.png)
-* ![police_car.png](https://github.com/yu-ogi/pack-image/blob/master/images/police_car.png)
-* ![spanner.png](https://github.com/yu-ogi/pack-image/blob/master/images/spanner.png)
-* ![squirrel.png](https://github.com/yu-ogi/pack-image/blob/master/images/squirrel.png)
+| Filename | Image |
+----|----|
+| fish.png       | ![fish.png](https://raw.githubusercontent.com/yu-ogi/pack-image/master/images/fish.png) |
+| police_car.png | ![police_car.png](https://raw.githubusercontent.com/yu-ogi/pack-image/master/images/police_car.png) |
+| spanner.png    | ![spanner.png](https://raw.githubusercontent.com/yu-ogi/pack-image/master/images/spanner.png) |
+| squirrel.png   | ![squirrel.png](https://raw.githubusercontent.com/yu-ogi/pack-image/master/images/squirrel.png) |
 
 ```sh
 pack-image "**/images/**.png" --output packed.png --json packed.json
@@ -27,7 +29,7 @@ pack-image "**/images/**.png" --output packed.png --json packed.json
 
 packed.png:
 
-![packed.png](https://github.com/yu-ogi/pack-image/blob/master/images/packed.png)
+![packed.png](https://raw.githubusercontent.com/yu-ogi/pack-image/master/images/packed.png)
 
 packed.json:
 
