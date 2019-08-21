@@ -2,7 +2,13 @@
   "name": "pack-image",
   "version": "0.1.0",
   "description": "A very simple packing images tool",
-  "keywords": ["spritesheet", "images", "pack", "bundle", "texture"],
+  "keywords": [
+    "spritesheet",
+    "images",
+    "pack",
+    "bundle",
+    "texture"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/yu-ogi/pack-image.git"
@@ -20,7 +26,7 @@
   "scripts": {
     "prepare": "npm run build",
     "build": "rimraf ./lib && tsc -p tsconfig.json",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm run build && jest"
   },
   "author": "yu-ogi",
   "license": "MIT",
@@ -32,7 +38,11 @@
   },
   "devDependencies": {
     "@types/images": "2.2.2",
+    "@types/jest": "^24.0.18",
     "@types/node": "12.6.8",
-    "rimraf": "2.6.3"
+    "jest": "^24.9.0",
+    "rimraf": "2.6.3",
+    "ts-jest": "^24.0.2",
+    "typescript": "^3.5.3"
   }
 }
