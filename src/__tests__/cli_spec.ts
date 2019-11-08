@@ -1,11 +1,11 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as childProcess from "child_process";
-import { SpriteInformationMap, SpriteInformation } from "../ImageData";
+import { SpriteInformationMap, SpriteInformation } from "../parameters";
 
 describe("cli specs", () => {
     beforeAll(() => {
-        fs.mkdirSync(path.join(__dirname, "tmp"));
+        fs.mkdirSync(path.join(__dirname, "tmp"), {recursive: true});
     });
 
     afterAll(() => {
