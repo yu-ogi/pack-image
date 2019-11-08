@@ -1,53 +1,69 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as childProcess from "child_process";
+import { SpriteInformationMap, SpriteInformation } from "../ImageData";
 
 describe("cli specs", () => {
-    test("should create packed image and json", done => {
+    beforeAll(() => {
+        fs.mkdirSync(path.join(__dirname, "tmp"));
+    });
+
+    afterAll(() => {
+        fs.rmdirSync(path.join(__dirname, "tmp"), {recursive: true});
+    });
+
+    test("should create packed image and json (basename)", done => {
         try {
+            const basename = `${Date.now()}`;
+
             childProcess.execSync(
-                "node ../../lib/cli.js './fixtures/**/*.png' --output ./tmp/packed.png --json ./tmp/packed.json",
+                `node ../../lib/cli.js "./fixtures/**/*.png" --output ./tmp/${basename}.png --json ./tmp/${basename}.json`,
                 {
                     cwd: __dirname
                 }
             );
 
-            expect(fs.existsSync(path.join(__dirname, "tmp", "packed.png"))).toBe(true);
+            expect(fs.existsSync(path.join(__dirname, "tmp", `${basename}.png`))).toBe(true);
+            const json = require(path.join(__dirname, "tmp", `${basename}.json`)) as SpriteInformationMap;
 
-            const json = require(path.join(__dirname, "tmp", "packed.json")) as {[name: string]: {
-                width: number;
-                height: number;
-                x: number;
-                y: number;
-            }};
-
-            expect(json["fish"]).not.toBeUndefined()
-            expect(typeof json["fish"].x).toBe("number");
-            expect(typeof json["fish"].y).toBe("number");
-            expect(typeof json["fish"].width).toBe("number");
-            expect(typeof json["fish"].height).toBe("number");
-
-            expect(json["police_car"]).not.toBeUndefined()
-            expect(typeof json["police_car"].x).toBe("number");
-            expect(typeof json["police_car"].y).toBe("number");
-            expect(typeof json["police_car"].width).toBe("number");
-            expect(typeof json["police_car"].height).toBe("number");
-
-            expect(json["spanner"]).not.toBeUndefined()
-            expect(typeof json["spanner"].x).toBe("number");
-            expect(typeof json["spanner"].y).toBe("number");
-            expect(typeof json["spanner"].width).toBe("number");
-            expect(typeof json["spanner"].height).toBe("number");
-
-            expect(json["squirrel"]).not.toBeUndefined()
-            expect(typeof json["squirrel"].x).toBe("number");
-            expect(typeof json["squirrel"].y).toBe("number");
-            expect(typeof json["squirrel"].width).toBe("number");
-            expect(typeof json["squirrel"].height).toBe("number");
-
+            assertValidSpriteData(json["fish"]);
+            assertValidSpriteData(json["police_car"]);
+            assertValidSpriteData(json["spanner"]);
+            assertValidSpriteData(json["squirrel"]);
             done();
         } catch (e) {
             done.fail(e);
         }
     });
+
+    test("should create packed image and json (filename)", done => {
+        try {
+            const basename = `${Date.now()}`;
+
+            childProcess.execSync(
+                `node ../../lib/cli.js "./fixtures/**/*.png" --output "./tmp/${basename}.png" --json "./tmp/${basename}.json" --json-name-type filename`,
+                {
+                    cwd: __dirname
+                }
+            );
+
+            expect(fs.existsSync(path.join(__dirname, "tmp", `${basename}.png`))).toBe(true);
+            const json = require(path.join(__dirname, "tmp", `${basename}.json`)) as SpriteInformationMap;
+
+            assertValidSpriteData(json["fish.png"]);
+            assertValidSpriteData(json["police_car.png"]);
+            assertValidSpriteData(json["spanner.png"]);
+            assertValidSpriteData(json["squirrel.png"]);
+            done();
+        } catch (e) {
+            done.fail(e);
+        }
+    });
+
+    function assertValidSpriteData(sprite: SpriteInformation) {
+        expect(typeof sprite.x).toBe("number");
+        expect(typeof sprite.y).toBe("number");
+        expect(typeof sprite.width).toBe("number");
+        expect(typeof sprite.height).toBe("number");
+    }
 });

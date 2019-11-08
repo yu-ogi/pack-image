@@ -31,18 +31,20 @@
   "author": "yu-ogi",
   "license": "MIT",
   "dependencies": {
-    "commander": "3.0.1",
+    "bin-pack": "1.0.2",
+    "commander": "4.0.0",
+    "glob": "7.1.6",
     "glob-promise": "3.4.0",
-    "images": "3.0.2",
-    "maxrects-packer": "2.4.5"
+    "pngjs": "3.4.0"
   },
   "devDependencies": {
-    "@types/images": "2.2.2",
-    "@types/jest": "24.0.18",
-    "@types/node": "12.7.4",
+    "@types/bin-pack": "1.0.0",
+    "@types/jest": "24.0.22",
+    "@types/node": "12.12.6",
+    "@types/pngjs": "^3.3.2",
     "jest": "24.9.0",
     "rimraf": "3.0.0",
-    "ts-jest": "24.0.2",
-    "typescript": "3.6.2"
+    "ts-jest": "24.1.0",
+    "typescript": "3.7.2"
   }
 }
