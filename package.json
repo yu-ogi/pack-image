@@ -38,7 +38,7 @@
     "pngjs": "3.4.0"
   },
   "devDependencies": {
-    "@types/jest": "24.0.22",
+    "@types/jest": "24.0.23",
     "@types/node": "12.12.7",
     "@types/pngjs": "3.3.2",
     "jest": "24.9.0",
