@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import program from "commander";
-import pack from "bin-pack";
+import { MaxRectsPacker } from "maxrects-packer";
 import { promises } from "fs";
 import * as path from "path";
 import { getImageFiles } from "./utils";
@@ -47,10 +47,12 @@ async function doAction() {
         const verbose = !!program.verbose;
         const args = program.args;
         const imageFiles = await getImageFiles(args);
-        const images: ImageData[] = [];
+        const packer = new MaxRectsPacker<ImageData>(maxWidth, maxHeight, padding, { smart: true, pot: false });
 
         createLogger(verbose);
         logger.log("input images:");
+
+        const images: ImageData[] = [];
 
         for (let i = 0; i < imageFiles.length; i++) {
             const png = await readPNG(imageFiles[i]);
@@ -68,8 +70,8 @@ async function doAction() {
                 throw new Error(`Invalid parameter detected: --json-name-type ${jsonNameType}`);
             }
             const image = new ImageData({
-                width: png.width + padding,
-                height: png.height + padding,
+                width: png.width,
+                height: png.height,
                 data: png,
                 name,
                 path: fileName
@@ -78,16 +80,16 @@ async function doAction() {
             logger.log(` - ${fileName} (${png.width}, ${png.height})`);
         }
 
-        const packed = pack(images);
+        packer.addArray(images);
 
-        if (maxWidth < packed.width - padding) {
-            throw new Error(`Please specify limit width (--width, -W) greater than ${packed.width}.`);
-        }
-        if (maxHeight < packed.height - padding) {
-            throw new Error(`Please specify limit height (--height, -H) greater than ${packed.height}.`);
+        if (packer.bins.length <= 0 || 2 <= packer.bins.length) {
+            throw new Error(
+                `Please specify the limit size of output image larger than the given size (--width, -W or --height, -H).`
+            );
         }
 
-        const sprites = await generatePNG(output, packed, padding);
+        const bin = packer.bins[0];
+        const sprites = await generatePNG(output, bin);
 
         if (json) {
             await promises.writeFile(json, JSON.stringify(sprites));
