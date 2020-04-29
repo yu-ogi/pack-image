@@ -35,7 +35,7 @@
     "glob": "7.1.6",
     "glob-promise": "3.4.0",
     "maxrects-packer": "2.5.0",
-    "pngjs": "3.4.0"
+    "pngjs": "5.0.0"
   },
   "devDependencies": {
     "@types/jest": "24.0.23",
