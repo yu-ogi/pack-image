@@ -40,7 +40,7 @@
   "devDependencies": {
     "@types/jest": "24.0.23",
     "@types/node": "12.12.11",
-    "@types/pngjs": "3.4.0",
+    "@types/pngjs": "3.4.2",
     "jest": "24.9.0",
     "rimraf": "3.0.0",
     "ts-jest": "24.1.0",
