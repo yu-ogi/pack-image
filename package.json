@@ -43,7 +43,7 @@
     "@types/pngjs": "3.4.0",
     "jest": "24.9.0",
     "rimraf": "3.0.0",
-    "ts-jest": "24.1.0",
+    "ts-jest": "25.5.1",
     "typescript": "3.7.2"
   }
 }
