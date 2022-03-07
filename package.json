@@ -33,7 +33,7 @@
   "dependencies": {
     "commander": "4.0.1",
     "glob": "7.1.6",
-    "glob-promise": "3.4.0",
+    "glob-promise": "4.2.2",
     "maxrects-packer": "2.5.0",
     "pngjs": "3.4.0"
   },
