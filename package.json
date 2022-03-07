@@ -34,7 +34,7 @@
     "commander": "4.0.1",
     "glob": "7.1.6",
     "glob-promise": "3.4.0",
-    "maxrects-packer": "2.5.0",
+    "maxrects-packer": "2.7.3",
     "pngjs": "3.4.0"
   },
   "devDependencies": {
