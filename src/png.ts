@@ -23,14 +23,15 @@ export function generatePNG(output: string, bin: Bin<ImageData>): Promise<Sprite
                 height: bin.height
             });
             const sprites: SpriteInformationMap = {};
-            logger.info(`try to pack images:`);
+
+            logger.info("Packing result:");
 
             for (let i = 0; i < bin.rects.length; i++) {
                 const image = bin.rects[i];
                 const src = image.data;
 
                 if (sprites[image.name]) {
-                    throw new Error(`Cannot specify same image names. (${image.name})`);
+                    throw new Error(`Duplicate image name detected: "${image.name}". Each image must have a unique name.`);
                 }
                 src.bitblt(dst, 0, 0, src.width, src.height, image.x, image.y);
                 sprites[image.name] = {
@@ -40,7 +41,10 @@ export function generatePNG(output: string, bin: Bin<ImageData>): Promise<Sprite
                     height: src.height
                 };
 
-                logger.info(` - ${image.path} assigned to x: ${image.x}, y: ${image.y}`);
+                logger.info(
+                    `  • ${image.path}\n` +
+                    `    → x: ${image.x}, y: ${image.y}, width: ${image.width}, height: ${image.height}`
+                );
             }
 
             const buffer = PNG.sync.write(dst);

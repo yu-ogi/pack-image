@@ -1,6 +1,6 @@
 ## pack-image
 
-**pack-image** is a very simple packing images tool.
+**pack-image** is a very simple tool for packing images.
 
 ## Installation
 
@@ -11,7 +11,7 @@ npm install pack-image -g
 ## Usage
 
 ```sh
-pack-image "**/image*.png" --output packed.png --json packed.json --verbose
+pack-image ./path/to/*.png --output packed.png --json packed.json
 ```
 
 ### example
@@ -24,7 +24,7 @@ pack-image "**/image*.png" --output packed.png --json packed.json --verbose
 | squirrel.png   | ![squirrel.png](https://raw.githubusercontent.com/yu-ogi/pack-image/master/images/squirrel.png) |
 
 ```sh
-pack-image "**/images/**.png" --output packed.png --json packed.json
+pack-image "**/images/**.png" --output packed.png --json packed.json --padding 2
 ```
 
 packed.png:

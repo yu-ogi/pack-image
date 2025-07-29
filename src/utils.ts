@@ -1,4 +1,4 @@
-import glob from "glob-promise";
+import { glob } from "glob";
 
 export async function getImageFiles(paths: string[]): Promise<string[]> {
     const ret: string[] = [];
