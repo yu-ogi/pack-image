@@ -1,26 +1,25 @@
 export class Logger {
-    constructor(public verbose: boolean) {}
+  constructor(public verbose: boolean) {}
 
-    info(...messages: any[]): void {
-        if (this.verbose)
-            console.info(...messages);
-    }
+  info(...messages: unknown[]): void {
+    if (this.verbose) console.info(...messages);
+  }
 
-    log(...messages: any[]): void {
-        console.log(...messages);
-    }
+  log(...messages: unknown[]): void {
+    console.log(...messages);
+  }
 
-    warn(...messages: any[]): void {
-        console.warn(...messages);
-    }
+  warn(...messages: unknown[]): void {
+    console.warn(...messages);
+  }
 
-    error(...messages: any[]): void {
-        console.error(...messages);
-    }
+  error(...messages: unknown[]): void {
+    console.error(...messages);
+  }
 }
 
 export let logger: Logger;
 
 export function createLogger(verbose: boolean) {
-    logger = new Logger(verbose);
+  logger = new Logger(verbose);
 }

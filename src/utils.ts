@@ -1,10 +1,26 @@
-import { glob } from "glob";
+import { statSync } from 'node:fs';
+import { glob } from 'glob';
 
-export async function getImageFiles(paths: string[]): Promise<string[]> {
-    const ret: string[] = [];
-    for (let i = 0; i < paths.length; i++) {
-        const files = await glob(paths[i]);
-        ret.push(...files);
+/**
+ * Expands all glob patterns and returns only files, deduplicated and sorted lexicographically.
+ */
+export async function collectInputPaths(patterns: string[]): Promise<string[]> {
+  const set = new Set<string>();
+  for (const pattern of patterns) {
+    const matches = await glob(pattern);
+    for (const match of matches) {
+      if (isFile(match)) {
+        set.add(match);
+      }
     }
-    return ret;
+  }
+  return Array.from(set).sort();
+}
+
+function isFile(path: string): boolean {
+  try {
+    return statSync(path).isFile();
+  } catch {
+    return false;
+  }
 }

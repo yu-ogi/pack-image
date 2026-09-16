@@ -6,20 +6,29 @@ on:
       - 'v*.*.*'
       - 'v*.*.*-*'
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+      - uses: pnpm/setup@703c52620218391530e48b9e8870d5c0082e1b9b # v2.1.0
         with:
-          node-version: '24'
-          registry-url: 'https://registry.npmjs.org/'
+          runtime: node@26
+          cache: true
       - name: Prepare
         run: |
-          npm ci
-          npm test
+          pnpm install --frozen-lockfile
+          pnpm test
+      - name: Determine dist-tag
+        id: dist-tag
+        run: |
+          # package.json の version からプレリリース識別子を抜き出して npm の dist-tag にする。
+          # 例: "3.0.0" -> "latest", "3.0.0-beta.0" -> "beta", "2.0.0-rc.1" -> "rc"
+          TAG="$(jq -r '(.version | capture("-(?<tag>[a-zA-Z]+)(\\.[0-9]+)?$")? // {tag:"latest"}) | .tag' package.json)"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
       - name: Publish
-        run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: pnpm publish --no-git-checks --tag "${{ steps.dist-tag.outputs.tag }}"

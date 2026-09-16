@@ -1,103 +1,59 @@
 #!/usr/bin/env node
 
-import { Command } from "commander";
-import { MaxRectsPacker } from "maxrects-packer";
-import { promises } from "fs";
-import * as path from "path";
-import { getImageFiles } from "./utils";
-import { createLogger, logger } from "./log";
-import { generatePNG, readPNG } from "./png";
-import { ImageData } from "./ImageData";
+import { mkdir } from 'node:fs/promises';
+import { dirname, extname } from 'node:path';
 
-const pkg = require("../package.json");
-const program = new Command();
-
-program
-    .name("image-packer")
-    .version(pkg.version)
-    .description("A very simple packing images tool")
-    .argument("<image_files...>", "list of image files to be packed")
-    .option("-o, --output <name>", "output filename of packed image", "packed.png")
-    .option("-W, --width <number>", "limit width of packed image", parseInt, 2048)
-    .option("-H, --height <number>", "limit height of packed image", parseInt, 2048)
-    .option("--padding <number>", "padding of each image", parseInt, 0)
-    .option("--json <name>", "output filename of packed position data")
-    .option(
-        "--json-name-type <type>",
-        "kind of json key to identify each image's position and size: 'basename', 'filename', 'relative', or 'absolute'",
-        "basename"
-    )
-    .option("--verbose", "output log for details")
-    .parse();
-
-const options = program.opts();
-
-if (program.processedArgs.length === 0) {
-    program.help({ error: true });
-}
+import { parseCli } from './args.js';
+import { writeLayout } from './layout.js';
+import { createLogger, logger } from './log.js';
+import { buildLayoutEntries, loadInputImages, measureCanvas, packImages, renderCanvas } from './pack.js';
+import { savePng } from './png.js';
 
 main();
 
-type JsonNameTypes = "basename" | "filename" | "relative" | "absolute";
-
 async function main() {
-    try {
-        const maxWidth = parseInt(options.width, 10);
-        const maxHeight = parseInt(options.height, 10);
-        const output = options.output as string;
-        const padding = parseInt(options.padding, 10);
-        const json = options.json as string;
-        const jsonNameType = options.jsonNameType as JsonNameTypes;
-        const verbose = !!options.verbose;
-        const imageFiles = await getImageFiles(program.processedArgs);
-        const packer = new MaxRectsPacker<ImageData>(maxWidth, maxHeight, padding, { smart: true, pot: false });
+  try {
+    await run(process.argv.slice(2));
+  } catch (e) {
+    console.error(e instanceof Error ? e.message : e);
+    process.exit(1);
+  }
+}
 
-        createLogger(verbose);
-        logger.log("Input images:");
+function defaultLayoutPath(output: string) {
+  const ext = extname(output);
+  return `${output.slice(0, output.length - ext.length)}.json`;
+}
 
-        const images: ImageData[] = [];
+async function ensureParentDir(path: string) {
+  const dir = dirname(path);
+  if (dir && dir !== '.') {
+    await mkdir(dir, { recursive: true });
+  }
+}
 
-        for (let i = 0; i < imageFiles.length; i++) {
-            const png = await readPNG(imageFiles[i]);
-            const fileName = imageFiles[i];
-            let name: string;
-            if (jsonNameType === "relative") {
-                name = path.relative(process.cwd(), fileName);
-            } else if (jsonNameType === "absolute") {
-                name = path.join(process.cwd(), fileName);
-            } else if (jsonNameType === "filename") {
-                name = path.basename(fileName);
-            } else if (jsonNameType === "basename") {
-                name = path.basename(fileName, path.extname(fileName));
-            } else {
-                throw new Error(`Invalid parameter detected: --json-name-type ${jsonNameType}`);
-            }
-            const image = new ImageData({
-                width: png.width,
-                height: png.height,
-                data: png,
-                name,
-                path: fileName
-            });
-            images.push(image);
-            logger.log(`  • ${image.name} → size: ${image.width}x${image.height}`);
-        }
+async function run(argv: string[]) {
+  const args = parseCli(argv);
+  const outputLayout = args.outputLayout ?? defaultLayoutPath(args.output);
 
-        packer.addArray(images);
+  createLogger(args.verbose);
 
-        if (packer.bins.length <= 0 || 2 <= packer.bins.length) {
-            throw new Error(`The specified output size is too small. Increase --width (-W) or --height (-H) to fit the images.`);
-        }
+  const { paths, images } = await loadInputImages(args.patterns);
+  const placementsByIndex = packImages(images, args);
+  const { width: canvasW, height: canvasH } = measureCanvas(images, placementsByIndex);
 
-        const bin = packer.bins[0];
-        const sprites = await generatePNG(output, bin);
+  logger.info(`canvas size: ${canvasW}x${canvasH}`);
 
-        if (json) {
-            await promises.writeFile(json, JSON.stringify(sprites));
-        }
+  await ensureParentDir(args.output);
+  await ensureParentDir(outputLayout);
 
-    } catch (e) {
-        console.error(e);
-        process.exit(1);
-    }
+  const canvas = renderCanvas(images, placementsByIndex, canvasW, canvasH);
+
+  logger.info(`saving output image: ${args.output}`);
+  await savePng(args.output, canvas);
+
+  const entries = buildLayoutEntries(paths, images, placementsByIndex, args.fileNameType);
+
+  logger.info(`writing layout: ${outputLayout}`);
+  await writeLayout(outputLayout, entries);
 }
