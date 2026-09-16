@@ -22,6 +22,7 @@ jobs:
       - name: Prepare
         run: |
           pnpm install --frozen-lockfile
+          pnpm build
           pnpm test
       - name: Determine dist-tag
         id: dist-tag
